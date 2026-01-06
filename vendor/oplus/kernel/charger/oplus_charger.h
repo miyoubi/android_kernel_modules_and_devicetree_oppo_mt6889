@@ -953,6 +953,12 @@ struct reserve_soc_data {
 	int smooth_soc_avg_cnt;
 };
 
+struct dec_cv_data {
+	int dec_vol;
+	int spec_dec_cv_mv;
+};
+#define MAX_DEC_CV_MV 150
+
 typedef enum {
 	AGING_FFC_NOT_SUPPORT,
 	AGING_FFC_V1,
@@ -971,6 +977,20 @@ typedef enum {
 #define AGING1_FFC2_DOUBLE_OFFSET_MV	10
 #define AGING2_FFC1_DOUBLE_OFFSET_MV	30
 #define AGING2_FFC2_DOUBLE_OFFSET_MV	20
+
+#define FCL_TABLE_MAX 2
+#define FCL_CURVE_MAX 3
+struct fcl_table {
+	int volt_diff;
+	int curr_dec;
+	int min_curr;
+} __attribute__((packed));
+
+struct fcl_curves {
+	struct fcl_table limits[FCL_CURVE_MAX];
+	int nums;
+	int index;
+};
 
 struct oplus_chg_chip {
 	struct i2c_client *client;
@@ -1123,6 +1143,7 @@ struct oplus_chg_chip {
 	int led_temp_status;
 	bool vooc_temp_change;
 	int vooc_temp_status;
+	bool full_limit_curr_support;
 	bool camera_on;
 	bool calling_on;
 	bool ac_online;
@@ -1360,6 +1381,7 @@ struct oplus_chg_chip {
 
 	bool pd_disable;
 	bool support_wd0;
+	struct dec_cv_data dec_cv;
 
 	bool support_usbtemp_protect_v2;
 	bool usbtemp_change_across_unplug;
@@ -1411,6 +1433,8 @@ struct oplus_chg_chip {
 
 	int bms_heat_temp_compensation;
 	int chg_cycle_status;
+	struct fcl_curves fcl;
+	int fcl_offset;
 };
 
 #define SOFT_REST_VOL_THRESHOLD		4300
@@ -1666,6 +1690,7 @@ int oplus_chg_get_cool_down_status(void);
 int oplus_chg_get_normal_cool_down_status(void);
 void oplus_smart_charge_by_cool_down(struct oplus_chg_chip *chip, int val);
 int oplus_convert_current_to_level(struct oplus_chg_chip *chip, int val);
+int oplus_convert_level_to_current(struct oplus_chg_chip *chip, int val);
 int oplus_convert_pps_current_to_level(struct oplus_chg_chip *chip, int val);
 void oplus_smart_charge_by_shell_temp(struct oplus_chg_chip *chip, int val);
 int oplus_smart_charge_by_bcc(struct oplus_chg_chip *chip, int val);
@@ -1785,5 +1810,7 @@ int oplus_get_ccdetect_online(void);
 void oplus_test_kit_unregister(void);
 #endif
 bool oplus_chg_get_gsm_call_on(void);
+bool oplus_chg_get_fcl_curr(int hw_vth, int sw_vth, int vbat, int *curr_dec, int *min_curr, bool *hw);
+int oplus_chg_get_vb_offset(void);
 //#endif
 #endif /*_OPLUS_CHARGER_H_*/

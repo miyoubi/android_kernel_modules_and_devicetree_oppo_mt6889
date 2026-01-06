@@ -831,6 +831,11 @@ struct oplus_voocphy_manager {
 	bool copycat_vooc_support;
 	int chip_id;
 	enum oplus_voocphy_ovp_ctrl ovp_ctrl_cpindex;
+	unsigned int current_full_limit;
+	unsigned int pre_current_full_limit;
+	bool dchg;
+	bool full_limit_curr;
+	unsigned int full_limit_count;
 };
 
 struct oplus_voocphy_operations {
@@ -875,6 +880,7 @@ struct oplus_voocphy_operations {
 	bool (*get_chg_pmid2out)(void);
 	int (*clk_err_clean)(void);
 	void (*set_fix_mode)(bool val);
+	int (*set_sstimeout_ucp_enable)(struct oplus_voocphy_manager *chip, bool enable);
 };
 
 #define VOOCPHY_LOG_BUF_LEN 1024

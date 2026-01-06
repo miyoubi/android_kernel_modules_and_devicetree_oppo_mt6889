@@ -166,6 +166,7 @@ enum oplus_chg_track_info_flag {
 	TRACK_NOTIFY_FLAG_VBATT_DIFF_OVER_INFO,
 	TRACK_NOTIFY_FLAG_SERVICE_UPDATE_WLS_THIRD_INFO,
 	TRACK_NOTIFY_FLAG_WLS_TRX_INFO,
+	TRACK_NOTIFY_FLAG_GAUGE_MODE,
 
 	TRACK_NOTIFY_FLAG_NO_CHARGING,
 
@@ -241,6 +242,11 @@ enum oplus_chg_track_chg_status {
 	TRACK_WLS_CHG_DONE,
 };
 
+enum oplus_chg_track_full_curr_limit_status {
+	TRACK_1_TIME_FULL_CURR_LIMIT,
+	TRACK_N_TIME_FULL_CURR_LIMIT,
+};
+
 enum oplus_chg_track_cp_voocphy_break_code {
 	TRACK_CP_VOOCPHY_BREAK_DEFAULT = 0,
 	TRACK_CP_VOOCPHY_FAST_ABSENT,
@@ -295,4 +301,7 @@ int oplus_chg_track_get_ufcs_err_reason(int err_type, char *err_reason, int len)
 int oplus_chg_track_get_cooldown_err_reason(int err_type, char *err_reason, int len);
 int oplus_chg_get_track_pen_match_err_reason(int err_type, char *err_reason, int len);
 int oplus_chg_track_set_hidl_info(const char *buf, size_t count);
+int oplus_chg_track_upload_rechg_info(void);
+int oplus_chg_track_set_fcl_info(int type, int batt_volt, int batt_curr, int batt_temp);
+int oplus_chg_track_set_fcl_batt_r(int batt_r);
 #endif
